@@ -1,164 +1,164 @@
-<script setup lang="ts">
-  import { toast } from 'vue3-toastify';
-  import { defaultToastOptions } from '~/constants';
+<script lang="ts" setup>
+import {toast} from 'vue3-toastify';
+import {defaultToastOptions} from '~/constants';
 
-  const tabTitle = ref('BracketBros');
+const tabTitle = ref('BracketBros');
 
-  useHead({
-    title: tabTitle,
-  });
+useHead({
+  title: tabTitle,
+});
 
-  const router = useRouter();
-  const route = useRoute();
+const router = useRouter();
+const route = useRoute();
 
-  // Reactive reference to hold the post data
-  const post = ref<post | null>(null);
+// Reactive reference to hold the post data
+const post = ref<post | null>(null);
 
-  // Reactive arrays to store available categories and tags
-  const availableCategories = ref<category[]>([]);
-  const availableTags = ref<tag[]>([]);
+// Reactive arrays to store available categories and tags
+const availableCategories = ref<category[]>([]);
+const availableTags = ref<tag[]>([]);
 
-  // Reactive variables for form data
-  const form = ref(false);
-  const title = ref('');
-  const selectedCategoryId = ref<number>();
-  const selectedTagIds = ref<number[]>([]);
-  const content = ref('');
+// Reactive variables for form data
+const form = ref(false);
+const title = ref('');
+const selectedCategoryId = ref<number>();
+const selectedTagIds = ref<number[]>([]);
+const content = ref('');
 
-  // Reactive variables to indicate loading states
-  const availableCategories_isLoading = ref(false);
-  const availableTags_isLoading = ref(false);
-  const editPost_isLoading = ref(false);
+// Reactive variables to indicate loading states
+const availableCategories_isLoading = ref(false);
+const availableTags_isLoading = ref(false);
+const editPost_isLoading = ref(false);
 
-  // Watch for changes in the post data to update the tab title
-  watch(
+// Watch for changes in the post data to update the tab title
+watch(
     post,
     (newValue) => {
       if (newValue?.title) {
         tabTitle.value = `Edit ${newValue.title} - BracketBros`;
       }
     },
-    { immediate: true }
-  );
+    {immediate: true}
+);
 
-  // Mounted hook to fetch post data and populate the form
-  onMounted(async () => {
-    const postId = Number(route.params.id);
+// Mounted hook to fetch post data and populate the form
+onMounted(async () => {
+  const postId = Number(route.params.id);
 
-    // Fetch post data if postId is valid
-    if (!isNaN(postId)) {
-      const { data: postData, error: postError } = await getPostById(postId);
-      if (postError) {
-        console.error('Error fetching post:', postError);
-        toast.error('Error fetching post', defaultToastOptions.error);
-      } else {
-        post.value = postData;
-
-        // Populate the form with fetched data
-        title.value = postData.title;
-        selectedCategoryId.value = postData.category.categoryId;
-        selectedTagIds.value = postData.tags.map(
-          (t: { tagId: number }) => t.tagId
-        );
-        content.value = postData.content;
-      }
+  // Fetch post data if postId is valid
+  if (!isNaN(postId)) {
+    const {data: postData, error: postError} = await getPostById(postId);
+    if (postError) {
+      console.error('Error fetching post:', postError);
+      toast.error('Error fetching post', defaultToastOptions.error);
     } else {
-      console.error('Invalid Post ID');
-      toast.error('Invalid Post ID', defaultToastOptions.error);
-    }
-  });
+      post.value = postData;
 
-  // Validation rules for the form fields
-  const rules = {
-    required: (value: any) => {
-      if (typeof value === 'string') {
-        return value.trim().length > 0 || 'Field is required';
-      }
-      if (Array.isArray(value)) {
-        return value.length > 0 || 'Field is required';
-      }
-      return !!value || 'Field is required';
-    },
-    title: (value: string) => {
-      const titlePattern = /^[0-9a-zA-ZæøåÆØÅ \-\/':?.!#@$%&*()]{2,64}$/;
-      return (
+      // Populate the form with fetched data
+      title.value = postData.title;
+      selectedCategoryId.value = postData.category.categoryId;
+      selectedTagIds.value = postData.tags.map(
+          (t: { tagId: number }) => t.tagId
+      );
+      content.value = postData.content;
+    }
+  } else {
+    console.error('Invalid Post ID');
+    toast.error('Invalid Post ID', defaultToastOptions.error);
+  }
+});
+
+// Validation rules for the form fields
+const rules = {
+  required: (value: any) => {
+    if (typeof value === 'string') {
+      return value.trim().length > 0 || 'Field is required';
+    }
+    if (Array.isArray(value)) {
+      return value.length > 0 || 'Field is required';
+    }
+    return !!value || 'Field is required';
+  },
+  title: (value: string) => {
+    const titlePattern = /^[0-9a-zA-ZæøåÆØÅ \-\/':?.!#@$%&*()]{2,64}$/;
+    return (
         titlePattern.test(value) ||
         "The title can only contain numbers, letters, or characters -:?.!,'@#$%&*(), and must be between 2 to 64 characters."
-      );
-    },
-    content: (value: string) => {
-      value = value.trimEnd();
-      return (
+    );
+  },
+  content: (value: string) => {
+    value = value.trimEnd();
+    return (
         (value.length >= 2 && value.length <= 4096) ||
         'The content must be between 2 to 4096 characters.'
-      );
-    },
+    );
+  },
+};
+
+// Function to save the edited post
+const save = async () => {
+  editPost_isLoading.value = true;
+
+  const post: editPostBody = {
+    id: Number(route.params.id),
+    Title: title.value,
+    // @ts-ignore - CategoryId is handled by Vuetify validation
+    CategoryId: selectedCategoryId.value,
+    TagsId: selectedTagIds.value,
+    Content: content.value,
   };
 
-  // Function to save the edited post
-  const save = async () => {
-    editPost_isLoading.value = true;
+  // Update the post
+  const response = await updatePost(post);
 
-    const post: editPostBody = {
-      id: Number(route.params.id),
-      Title: title.value,
-      // @ts-ignore - CategoryId is handled by Vuetify validation
-      CategoryId: selectedCategoryId.value,
-      TagsId: selectedTagIds.value,
-      Content: content.value,
-    };
-
-    // Update the post
-    const response = await updatePost(post);
-
-    // Navigate to the updated post or show error toast
-    if (response && response.data) {
-      await router.push(`/post/${response.data}`);
-    } else {
-      toast.error(
+  // Navigate to the updated post or show error toast
+  if (response && response.data) {
+    await router.push(`/post/${response.data}`);
+  } else {
+    toast.error(
         'Unexpected error when trying creating post, please try again later.',
         defaultToastOptions.error
-      );
-    }
+    );
+  }
 
-    editPost_isLoading.value = false;
-  };
+  editPost_isLoading.value = false;
+};
 
-  // Another mounted hook for additional data fetching
-  onMounted(async () => {
-    await checkLoginAndReroute();
+// Another mounted hook for additional data fetching
+onMounted(async () => {
+  await checkLoginAndReroute();
 
-    // Fetch and populate categories and tags
-    availableCategories_isLoading.value = true;
-    availableTags_isLoading.value = true;
+  // Fetch and populate categories and tags
+  availableCategories_isLoading.value = true;
+  availableTags_isLoading.value = true;
 
-    const categoriesData = await getAllCategories();
-    if (categoriesData) {
-      availableCategories.value = categoriesData.sort(
+  const categoriesData = await getAllCategories();
+  if (categoriesData) {
+    availableCategories.value = categoriesData.sort(
         (a: category, b: category) => a.name.localeCompare(b.name)
-      );
-    } else {
-      toast.error(
+    );
+  } else {
+    toast.error(
         'Error fetching categories from the database.',
         defaultToastOptions.error
-      );
-    }
-    availableCategories_isLoading.value = false;
+    );
+  }
+  availableCategories_isLoading.value = false;
 
-    const { data: tagsData } = await getAllTags();
-    if (tagsData) {
-      // @ts-ignore
-      availableTags.value = tagsData.sort((a: tag, b: tag) =>
+  const {data: tagsData} = await getAllTags();
+  if (tagsData) {
+    // @ts-ignore
+    availableTags.value = tagsData.sort((a: tag, b: tag) =>
         a.name.localeCompare(b.name)
-      );
-    } else {
-      toast.error(
+    );
+  } else {
+    toast.error(
         'Error fetching tags from the database.',
         defaultToastOptions.error
-      );
-    }
-    availableTags_isLoading.value = false;
-  });
+    );
+  }
+  availableTags_isLoading.value = false;
+});
 </script>
 
 <template>
@@ -167,65 +167,65 @@
       <h1 class="d-flex justify-center align-center mb-8 text-h5">
         Edit Post
         <v-icon
-          icon="fa:fa-solid fa-pen-to-square"
-          size="x-small"
-          class="ml-4"
+            class="ml-4"
+            icon="fa:fa-solid fa-pen-to-square"
+            size="x-small"
         ></v-icon>
       </h1>
 
       <v-form v-model="form" @submit.prevent="save">
         <v-text-field
-          label="Title"
-          v-model="title"
-          variant="outlined"
-          :rules="[rules.required, rules.title]"
-          class="mb-3"
+            v-model="title"
+            :rules="[rules.required, rules.title]"
+            class="mb-3"
+            label="Title"
+            variant="outlined"
         ></v-text-field>
 
         <v-select
-          label="Category"
-          :items="availableCategories"
-          :item-title="(category: category) => category.name"
-          :item-value="(category: category) => category.categoryId"
-          v-model="selectedCategoryId"
-          :rules="[rules.required]"
-          variant="outlined"
-          class="mb-3"
+            v-model="selectedCategoryId"
+            :item-title="(category: category) => category.name"
+            :item-value="(category: category) => category.categoryId"
+            :items="availableCategories"
+            :rules="[rules.required]"
+            class="mb-3"
+            label="Category"
+            variant="outlined"
         >
         </v-select>
 
         <v-select
-          label="Tags"
-          :items="availableTags"
-          :item-title="(tag: tag) => tag.name"
-          :item-value="(tag: tag) => tag.tagId"
-          v-model="selectedTagIds"
-          :rules="[rules.required]"
-          multiple
-          chips
-          variant="outlined"
-          class="mb-3"
+            v-model="selectedTagIds"
+            :item-title="(tag: tag) => tag.name"
+            :item-value="(tag: tag) => tag.tagId"
+            :items="availableTags"
+            :rules="[rules.required]"
+            chips
+            class="mb-3"
+            label="Tags"
+            multiple
+            variant="outlined"
         >
         </v-select>
 
         <v-textarea
-          label="Content"
-          v-model="content"
-          variant="outlined"
-          :rules="[rules.required, rules.content]"
-          :counter="4096"
-          class="mb-3"
+            v-model="content"
+            :counter="4096"
+            :rules="[rules.required, rules.content]"
+            class="mb-3"
+            label="Content"
+            variant="outlined"
         ></v-textarea>
 
         <v-btn
-          type="submit"
-          size="x-large"
-          variant="flat"
-          color="primary"
-          :disabled="!form"
-          :loading="editPost_isLoading"
-          block
-          class="text-body-1"
+            :disabled="!form"
+            :loading="editPost_isLoading"
+            block
+            class="text-body-1"
+            color="primary"
+            size="x-large"
+            type="submit"
+            variant="flat"
         >
           Save
           <template v-slot:append>

@@ -22,8 +22,8 @@ public class AccountController : Controller
     private readonly ILogger<RegisterModel> _logger;
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly UserManager<ApplicationUser> _userManager;
-    private readonly IUserStore<ApplicationUser> _userStore;
     private readonly IForumRepository<ApplicationUser> _userRepository;
+    private readonly IUserStore<ApplicationUser> _userStore;
 
 
     public AccountController(
@@ -73,7 +73,7 @@ public class AccountController : Controller
             await _signInManager.SignOutAsync();
             _logger.LogInformation(
                 $"Unable to load user with ID '{_userManager.GetUserId(User)}' in GetUserActivity() login the user out.");
-            return NotFound($"Unable to load user with ID, logging you out.");
+            return NotFound("Unable to load user with ID, logging you out.");
         }
 
         // Initialize variable, and fetch all activity for the user
@@ -87,14 +87,14 @@ public class AccountController : Controller
         }
 
         // Create a list of all the post ids, liked post ids, saved post ids, comment ids and liked comment ids
-        var posts = (userActivity.Posts ?? new List<Post>()).Select(post => post.PostId).ToList();
-        var likedPosts = (userActivity.LikedPosts ?? new List<Post>()).Select(post => post.PostId).ToList();
-        var savedPosts = (userActivity.SavedPosts ?? new List<Post>()).Select(post => post.PostId).ToList();
-        var comments = (userActivity.Comments ?? new List<Comment>()).Select(comment => comment.CommentId)
+        var posts = (userActivity.Posts ?? []).Select(post => post.PostId).ToList();
+        var likedPosts = (userActivity.LikedPosts ?? []).Select(post => post.PostId).ToList();
+        var savedPosts = (userActivity.SavedPosts ?? []).Select(post => post.PostId).ToList();
+        var comments = (userActivity.Comments ?? []).Select(comment => comment.CommentId)
             .ToList();
-        var likedComments = (userActivity.LikedComments ?? new List<Comment>())
+        var likedComments = (userActivity.LikedComments ?? [])
             .Select(comment => comment.CommentId).ToList();
-        var savedComments = (userActivity.SavedComments ?? new List<Comment>()).Select(comment => comment.CommentId)
+        var savedComments = (userActivity.SavedComments ?? []).Select(comment => comment.CommentId)
             .ToList();
 
         // Create a custom json object
@@ -122,10 +122,7 @@ public class AccountController : Controller
         if (userId.IsNullOrEmpty()) return StatusCode(403, "User not found, please log in again"); //  403 Forbidden
 
         var user = await _userManager.GetUserAsync(User);
-        if (user == null)
-        {
-            return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-        }
+        if (user == null) return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
 
         // Initialize variable, and fetch all activity for the user
         var userActivity = await _userRepository.GetUserActivity(GetUserId());

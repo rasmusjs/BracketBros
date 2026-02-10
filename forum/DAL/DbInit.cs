@@ -215,11 +215,11 @@ public static class DbInit
                 TotalLikes = random.Next(9999),
                 UserId = RandomUser(),
                 CategoryId = categoriesList.First(c => c.Name == "Code Review").CategoryId,
-                Tags = new List<Tag>
-                {
+                Tags =
+                [
                     tags.First(t => t.Name == "JavaScript"),
                     tags.First(t => t.Name == "HTML")
-                }
+                ]
             },
             new()
             {
@@ -231,11 +231,11 @@ public static class DbInit
                 TotalLikes = random.Next(9999),
                 UserId = RandomUser(),
                 CategoryId = categoriesList.First(c => c.Name == "Code Review").CategoryId,
-                Tags = new List<Tag>
-                {
+                Tags =
+                [
                     tags.First(t => t.Name == "Beginner"),
                     tags.First(t => t.Name == "HTML")
-                }
+                ]
             },
             new()
             {
@@ -247,10 +247,7 @@ public static class DbInit
                 TotalLikes = random.Next(9999),
                 UserId = RandomUser(),
                 CategoryId = categoriesList.First(c => c.Name == "Algorithms").CategoryId,
-                Tags = new List<Tag>
-                {
-                    tags.First(t => t.Name == "Python")
-                }
+                Tags = [tags.First(t => t.Name == "Python")]
             },
             new()
             {
@@ -262,11 +259,11 @@ public static class DbInit
                 TotalLikes = random.Next(9999),
                 UserId = RandomUser(),
                 CategoryId = categoriesList.First(c => c.Name == "Algorithms").CategoryId,
-                Tags = new List<Tag>
-                {
+                Tags =
+                [
                     tags.First(t => t.Name == "C#"),
                     tags.First(t => t.Name == "Machine Learning")
-                }
+                ]
             },
             new()
             {
@@ -278,10 +275,7 @@ public static class DbInit
                 TotalLikes = random.Next(9999),
                 UserId = RandomUser(),
                 CategoryId = categoriesList.First(c => c.Name == "Database").CategoryId,
-                Tags = new List<Tag>
-                {
-                    tags.First(t => t.Name == "SQL")
-                }
+                Tags = [tags.First(t => t.Name == "SQL")]
             },
             new()
             {
@@ -293,10 +287,7 @@ public static class DbInit
                 TotalLikes = random.Next(9999),
                 UserId = RandomUser(),
                 CategoryId = categoriesList.First(c => c.Name == "Database").CategoryId,
-                Tags = new List<Tag>
-                {
-                    tags.First(t => t.Name == "Cloudflare")
-                }
+                Tags = [tags.First(t => t.Name == "Cloudflare")]
             },
             new()
             {
@@ -308,11 +299,11 @@ public static class DbInit
                 TotalLikes = random.Next(9999),
                 UserId = RandomUser(),
                 CategoryId = categoriesList.First(c => c.Name == "Front End").CategoryId,
-                Tags = new List<Tag>
-                {
+                Tags =
+                [
                     tags.First(t => t.Name == "JavaScript"),
                     tags.First(t => t.Name == "Humor")
-                }
+                ]
             },
             new()
             {
@@ -324,11 +315,11 @@ public static class DbInit
                 TotalLikes = random.Next(9999),
                 UserId = RandomUser(),
                 CategoryId = categoriesList.First(c => c.Name == "Front End").CategoryId,
-                Tags = new List<Tag>
-                {
+                Tags =
+                [
                     tags.First(t => t.Name == "Beginner"),
                     tags.First(t => t.Name == "CSS")
-                }
+                ]
             },
             new()
             {
@@ -340,11 +331,11 @@ public static class DbInit
                 TotalLikes = random.Next(9999),
                 UserId = RandomUser(),
                 CategoryId = categoriesList.First(c => c.Name == "Front End").CategoryId,
-                Tags = new List<Tag>
-                {
+                Tags =
+                [
                     tags.First(t => t.Name == "HTML"),
                     tags.First(t => t.Name == "CSS")
-                }
+                ]
             },
             new()
             {
@@ -356,11 +347,11 @@ public static class DbInit
                 TotalLikes = random.Next(9999),
                 UserId = RandomUser(),
                 CategoryId = categoriesList.First(c => c.Name == "Back End").CategoryId,
-                Tags = new List<Tag>
-                {
+                Tags =
+                [
                     tags.First(t => t.Name == "C#"),
                     tags.First(t => t.Name == "Version Control")
-                }
+                ]
             },
             new()
             {
@@ -372,10 +363,7 @@ public static class DbInit
                 TotalLikes = random.Next(9999),
                 UserId = RandomUser(),
                 CategoryId = categoriesList.First(c => c.Name == "Back End").CategoryId,
-                Tags = new List<Tag>
-                {
-                    tags.First(t => t.Name == "Data Science")
-                }
+                Tags = [tags.First(t => t.Name == "Data Science")]
             },
             new()
             {
@@ -387,10 +375,7 @@ public static class DbInit
                 TotalLikes = random.Next(9999),
                 UserId = RandomUser(),
                 CategoryId = categoriesList.First(c => c.Name == "Game Development").CategoryId,
-                Tags = new List<Tag>
-                {
-                    tags.First(t => t.Name == "Unity")
-                }
+                Tags = [tags.First(t => t.Name == "Unity")]
             },
             new()
             {
@@ -402,11 +387,11 @@ public static class DbInit
                 TotalLikes = random.Next(9999),
                 UserId = RandomUser(),
                 CategoryId = categoriesList.First(c => c.Name == "Game Development").CategoryId,
-                Tags = new List<Tag>
-                {
+                Tags =
+                [
                     tags.First(t => t.Name == "C#"),
                     tags.First(t => t.Name == "Machine Learning")
-                }
+                ]
             },
             new()
             {
@@ -418,10 +403,7 @@ public static class DbInit
                 TotalLikes = random.Next(9999),
                 UserId = RandomUser(),
                 CategoryId = categoriesList.First(c => c.Name == "Debugging").CategoryId,
-                Tags = new List<Tag>
-                {
-                    tags.First(t => t.Name == "Python")
-                }
+                Tags = [tags.First(t => t.Name == "Python")]
             },
             new()
             {
@@ -433,10 +415,7 @@ public static class DbInit
                 TotalLikes = random.Next(9999),
                 UserId = RandomUser(),
                 CategoryId = categoriesList.First(c => c.Name == "Debugging").CategoryId,
-                Tags = new List<Tag>
-                {
-                    tags.First(t => t.Name == "PowerShell")
-                }
+                Tags = [tags.First(t => t.Name == "PowerShell")]
             },
             new()
             {
@@ -448,10 +427,7 @@ public static class DbInit
                 TotalLikes = random.Next(9999),
                 UserId = RandomUser(),
                 CategoryId = categoriesList.First(c => c.Name == "Development").CategoryId,
-                Tags = new List<Tag>
-                {
-                    tags.First(t => t.Name == "Version Control")
-                }
+                Tags = [tags.First(t => t.Name == "Version Control")]
             },
             new()
             {
@@ -463,10 +439,7 @@ public static class DbInit
                 TotalLikes = random.Next(9999),
                 UserId = RandomUser(),
                 CategoryId = categoriesList.First(c => c.Name == "Development").CategoryId,
-                Tags = new List<Tag>
-                {
-                    tags.First(t => t.Name == "Windows")
-                }
+                Tags = [tags.First(t => t.Name == "Windows")]
             },
             new()
             {
@@ -478,10 +451,7 @@ public static class DbInit
                 TotalLikes = random.Next(9999),
                 UserId = RandomUser(),
                 CategoryId = categoriesList.First(c => c.Name == "General").CategoryId,
-                Tags = new List<Tag>
-                {
-                    tags.First(t => t.Name == "Humor")
-                }
+                Tags = [tags.First(t => t.Name == "Humor")]
             },
             new()
             {
@@ -493,10 +463,7 @@ public static class DbInit
                 TotalLikes = random.Next(9999),
                 UserId = RandomUser(),
                 CategoryId = categoriesList.First(c => c.Name == "News").CategoryId,
-                Tags = new List<Tag>
-                {
-                    tags.First(t => t.Name == "Java")
-                }
+                Tags = [tags.First(t => t.Name == "Java")]
             },
             new()
             {
@@ -508,10 +475,7 @@ public static class DbInit
                 TotalLikes = random.Next(9999),
                 UserId = RandomUser(),
                 CategoryId = categoriesList.First(c => c.Name == "News").CategoryId,
-                Tags = new List<Tag>
-                {
-                    tags.First(t => t.Name == "Machine Learning")
-                }
+                Tags = [tags.First(t => t.Name == "Machine Learning")]
             },
             new()
             {
@@ -523,10 +487,7 @@ public static class DbInit
                 TotalLikes = random.Next(9999),
                 UserId = RandomUser(),
                 CategoryId = categoriesList.First(c => c.Name == "News").CategoryId,
-                Tags = new List<Tag>
-                {
-                    tags.First(t => t.Name == "Machine Learning")
-                }
+                Tags = [tags.First(t => t.Name == "Machine Learning")]
             },
             new()
             {
@@ -538,10 +499,7 @@ public static class DbInit
                 TotalLikes = random.Next(9999),
                 UserId = RandomUser(),
                 CategoryId = categoriesList.First(c => c.Name == "News").CategoryId,
-                Tags = new List<Tag>
-                {
-                    tags.First(t => t.Name == "Windows")
-                }
+                Tags = [tags.First(t => t.Name == "Windows")]
             },
             new()
             {
@@ -553,10 +511,7 @@ public static class DbInit
                 TotalLikes = random.Next(9999),
                 UserId = RandomUser(),
                 CategoryId = categoriesList.First(c => c.Name == "Technology").CategoryId,
-                Tags = new List<Tag>
-                {
-                    tags.First(t => t.Name == "Machine Learning")
-                }
+                Tags = [tags.First(t => t.Name == "Machine Learning")]
             },
             new()
             {
@@ -568,10 +523,7 @@ public static class DbInit
                 TotalLikes = random.Next(9999),
                 UserId = RandomUser(),
                 CategoryId = categoriesList.First(c => c.Name == "Technology").CategoryId,
-                Tags = new List<Tag>
-                {
-                    tags.First(t => t.Name == "Unity")
-                }
+                Tags = [tags.First(t => t.Name == "Unity")]
             },
             new()
             {
@@ -583,10 +535,7 @@ public static class DbInit
                 TotalLikes = random.Next(9999),
                 UserId = RandomUser(),
                 CategoryId = categoriesList.First(c => c.Name == "Science").CategoryId,
-                Tags = new List<Tag>
-                {
-                    tags.First(t => t.Name == "Python")
-                }
+                Tags = [tags.First(t => t.Name == "Python")]
             },
             new()
             {
@@ -598,10 +547,7 @@ public static class DbInit
                 TotalLikes = random.Next(9999),
                 UserId = RandomUser(),
                 CategoryId = categoriesList.First(c => c.Name == "Science").CategoryId,
-                Tags = new List<Tag>
-                {
-                    tags.First(t => t.Name == "C#")
-                }
+                Tags = [tags.First(t => t.Name == "C#")]
             },
             new()
             {
@@ -613,11 +559,11 @@ public static class DbInit
                 TotalLikes = random.Next(9999),
                 UserId = RandomUser(),
                 CategoryId = categoriesList.First(c => c.Name == "General").CategoryId,
-                Tags = new List<Tag>
-                {
+                Tags =
+                [
                     tags.First(t => t.Name == "PowerShell"),
                     tags.First(t => t.Name == "Windows")
-                }
+                ]
             },
             new()
             {
@@ -629,11 +575,11 @@ public static class DbInit
                 TotalLikes = random.Next(9999),
                 UserId = RandomUser(),
                 CategoryId = categoriesList.First(c => c.Name == "Front End").CategoryId,
-                Tags = new List<Tag>
-                {
+                Tags =
+                [
                     tags.First(t => t.Name == "JavaScript"),
                     tags.First(t => t.Name == "Beginner")
-                }
+                ]
             },
             new()
             {
@@ -645,10 +591,7 @@ public static class DbInit
                 TotalLikes = random.Next(9999),
                 UserId = RandomUser(),
                 CategoryId = categoriesList.First(c => c.Name == "General").CategoryId,
-                Tags = new List<Tag>
-                {
-                    tags.First(t => t.Name == "Python")
-                }
+                Tags = [tags.First(t => t.Name == "Python")]
             },
             new()
             {
@@ -660,10 +603,7 @@ public static class DbInit
                 TotalLikes = random.Next(9999),
                 UserId = RandomUser(),
                 CategoryId = categoriesList.First(c => c.Name == "Debugging").CategoryId,
-                Tags = new List<Tag>
-                {
-                    tags.First(t => t.Name == "Java")
-                }
+                Tags = [tags.First(t => t.Name == "Java")]
             },
             new()
             {
@@ -675,12 +615,12 @@ public static class DbInit
                 TotalLikes = random.Next(9999),
                 UserId = RandomUser(),
                 CategoryId = categoriesList.First(c => c.Name == "General").CategoryId,
-                Tags = new List<Tag>
-                {
+                Tags =
+                [
                     tags.First(t => t.Name == "Data Science"),
                     tags.First(t => t.Name == "Beginner"),
                     tags.First(t => t.Name == "Machine Learning")
-                }
+                ]
             },
             new()
             {
@@ -692,11 +632,11 @@ public static class DbInit
                 TotalLikes = random.Next(9999),
                 UserId = RandomUser(),
                 CategoryId = categoriesList.First(c => c.Name == "Development").CategoryId,
-                Tags = new List<Tag>
-                {
+                Tags =
+                [
                     tags.First(t => t.Name == "Git"),
                     tags.First(t => t.Name == "Version Control")
-                }
+                ]
             },
             new()
             {
@@ -708,10 +648,7 @@ public static class DbInit
                 TotalLikes = random.Next(9999),
                 UserId = RandomUser(),
                 CategoryId = categoriesList.First(c => c.Name == "Front End").CategoryId,
-                Tags = new List<Tag>
-                {
-                    tags.First(t => t.Name == "CSS")
-                }
+                Tags = [tags.First(t => t.Name == "CSS")]
             },
             new()
             {
@@ -723,10 +660,7 @@ public static class DbInit
                 TotalLikes = random.Next(9999),
                 UserId = RandomUser(),
                 CategoryId = categoriesList.First(c => c.Name == "Game Development").CategoryId,
-                Tags = new List<Tag>
-                {
-                    tags.First(t => t.Name == "Unity")
-                }
+                Tags = [tags.First(t => t.Name == "Unity")]
             }
         };
 

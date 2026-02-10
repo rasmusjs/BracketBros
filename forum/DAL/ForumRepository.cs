@@ -8,19 +8,15 @@ namespace forum.DAL;
 //Source: https://learn.microsoft.com/en-us/aspnet/mvc/overview/older-versions/getting-started-with-ef-5-using-mvc-4/implementing-the-repository-and-unit-of-work-patterns-in-an-asp-net-mvc-application#implement-a-generic-repository-and-a-unit-of-work-class
 
 // A generic repository class for the forum
-public class ForumRepository<TEntity> : IForumRepository<TEntity> where TEntity : class
+public class ForumRepository<TEntity>(
+    ForumDbContext db,
+    ILogger<ForumRepository<TEntity>> logger)
+    : IForumRepository<TEntity>
+    where TEntity : class
 {
     // Initialize DB session and logger
-    private readonly ForumDbContext _db;
-    private readonly ILogger<ForumRepository<TEntity>> _logger;
 
     // Constructor for initializing the logger and DB
-    public ForumRepository(ForumDbContext db,
-        ILogger<ForumRepository<TEntity>> logger)
-    {
-        _db = db;
-        _logger = logger;
-    }
 
     // Function for fetching all entities from the database
     public async Task<IEnumerable<TEntity>?> GetAll()
@@ -28,7 +24,7 @@ public class ForumRepository<TEntity> : IForumRepository<TEntity> where TEntity 
         // Tries to retrieve all records from the database as a list
         try
         {
-            return await _db.Set<TEntity>().ToListAsync();
+            return await db.Set<TEntity>().ToListAsync();
         }
         // Exception error handling if it can't fetch entities from the database
         catch (Exception e)
@@ -52,7 +48,7 @@ public class ForumRepository<TEntity> : IForumRepository<TEntity> where TEntity 
         // Tries to retrieve all records from the database as a list
         try
         {
-            var comments = await _db.Set<Comment>().Where(comment => comment.PostId == id)
+            var comments = await db.Set<Comment>().Where(comment => comment.PostId == id)
                 .ToListAsync();
 
             return comments;
@@ -75,7 +71,7 @@ public class ForumRepository<TEntity> : IForumRepository<TEntity> where TEntity 
         // Tries to retrieve all activity from the database as object
         try
         {
-            return await _db.Set<ApplicationUser>().Include(user => user.Posts).Include(user => user.Comments)
+            return await db.Set<ApplicationUser>().Include(user => user.Posts).Include(user => user.Comments)
                 .Include(user => user.LikedPosts).Include(user => user.LikedComments)
                 .Where(user => user.Id == userId).FirstAsync();
         }
@@ -97,7 +93,7 @@ public class ForumRepository<TEntity> : IForumRepository<TEntity> where TEntity 
             term = term.ToLower();
 
             // Search in title, content, tags and comments (might be costly)
-            var posts = await _db.Posts
+            var posts = await db.Posts
                 .Include(post => post.Tags)
                 .Include(post => post.Category)
                 .Include(post => post.Comments)
@@ -113,7 +109,7 @@ public class ForumRepository<TEntity> : IForumRepository<TEntity> where TEntity 
 
             if (!posts.Any())
             {
-                _logger.LogInformation("[Forum Repository] GetAllPostsByTerm() found no posts");
+                logger.LogInformation("[Forum Repository] GetAllPostsByTerm() found no posts");
                 return null;
             }
 
@@ -142,7 +138,7 @@ public class ForumRepository<TEntity> : IForumRepository<TEntity> where TEntity 
         try
         {
             // Query the database for posts by id. Includes tags and categories (eagerly loading)
-            var post = await _db.Posts
+            var post = await db.Posts
                 .Include(post => post.Tags)
                 .Include(post => post.Category)
                 .Include(post => post.Comments)
@@ -168,14 +164,15 @@ public class ForumRepository<TEntity> : IForumRepository<TEntity> where TEntity 
         try
         {
             // Query the database for all posts. Includes tags and categories (eagerly loading)
-            var posts = await _db.Posts.Include(post => post.Tags).Include(post => post.Category)
+            var posts = await db.Posts.Include(post => post.Tags).Include(post => post.Category)
                 .Include(post => post.User!).ToListAsync();
 
             if (!posts.Any())
             {
-                _logger.LogInformation("[Forum Repository] GetAllPosts() found no posts");
+                logger.LogInformation("[Forum Repository] GetAllPosts() found no posts");
                 return null;
             }
+
             return posts;
         }
         // Error handling if it can't fetch posts from db
@@ -197,10 +194,11 @@ public class ForumRepository<TEntity> : IForumRepository<TEntity> where TEntity 
             LogError("GetTById", new Exception($"Entity not found for id {id}"));
             return null;
         }
+
         try
         {
             // Query the database for all entities with primary key as id
-            return await _db.Set<TEntity>().FindAsync(id);
+            return await db.Set<TEntity>().FindAsync(id);
         }
         // Error handling if it can't fetch entities
         catch (Exception e)
@@ -218,9 +216,9 @@ public class ForumRepository<TEntity> : IForumRepository<TEntity> where TEntity 
         try
         {
             // Tries to add an entity, save the changes and return the entity
-            _db.Set<TEntity>().Add(entity);
-            await _db.SaveChangesAsync();
-            _logger.LogInformation("[Forum Repository] Entity added to the database: {entity}", entity);
+            db.Set<TEntity>().Add(entity);
+            await db.SaveChangesAsync();
+            logger.LogInformation("[Forum Repository] Entity added to the database: {entity}", entity);
             return entity;
         }
         // Error handling if it can't create a new entity in the db
@@ -238,9 +236,9 @@ public class ForumRepository<TEntity> : IForumRepository<TEntity> where TEntity 
         try
         {
             // Tries to update an entity in the database and save the changes
-            _db.Set<TEntity>().Update(entity);
-            await _db.SaveChangesAsync();
-            _logger.LogInformation("[Forum Repository] Entity updated in the database: {entity}", entity);
+            db.Set<TEntity>().Update(entity);
+            await db.SaveChangesAsync();
+            logger.LogInformation("[Forum Repository] Entity updated in the database: {entity}", entity);
             return true;
         }
         // Error handling if it can't update an entity in the db
@@ -265,7 +263,7 @@ public class ForumRepository<TEntity> : IForumRepository<TEntity> where TEntity 
         try
         {
             // Finds the entity in the database
-            var entity = await _db.Set<TEntity>().FindAsync(id);
+            var entity = await db.Set<TEntity>().FindAsync(id);
             // Error handling if there are no entity with the given id 
             if (entity == null)
             {
@@ -275,9 +273,9 @@ public class ForumRepository<TEntity> : IForumRepository<TEntity> where TEntity 
             }
 
             // Removes the entity from the database and save the changes
-            _db.Set<TEntity>().Remove(entity);
-            await _db.SaveChangesAsync();
-            _logger.LogInformation("[Forum Repository] Entity removed from the database: {entity}", entity);
+            db.Set<TEntity>().Remove(entity);
+            await db.SaveChangesAsync();
+            logger.LogInformation("[Forum Repository] Entity removed from the database: {entity}", entity);
             return true;
         }
         // Error handling if it is not able to delete the entity
@@ -303,7 +301,7 @@ public class ForumRepository<TEntity> : IForumRepository<TEntity> where TEntity 
             // Source: https://learn.microsoft.com/en-us/ef/core/querying/sql-queries
             // According to the documentation it's faster to do this than to select all the tags and then remove them one by one for updating
             var executeSqlAsync =
-                await _db.Database.ExecuteSqlAsync($"DELETE FROM PostTag WHERE PostsPostId = {id}");
+                await db.Database.ExecuteSqlAsync($"DELETE FROM PostTag WHERE PostsPostId = {id}");
 
             // Error handling if it could not find the entity 
             if (executeSqlAsync == 0)
@@ -328,7 +326,7 @@ public class ForumRepository<TEntity> : IForumRepository<TEntity> where TEntity 
 // Common method for logging errors
     private void LogError(string methodName, Exception exception)
     {
-        _logger.LogError(
+        logger.LogError(
             $"[{typeof(TEntity).Name} Repository] {methodName}() failed, error message: {exception.Message}");
     }
 }

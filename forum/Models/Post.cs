@@ -52,7 +52,7 @@ public class Post
     [Required]
     [NotMapped]
     public virtual List<int>? TagsId { get; set; } // ony used for creating a post
-    
+
     // navigation property
     [JsonProperty("tags")] public virtual List<Tag>? Tags { get; set; }
 
