@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -725,22 +726,29 @@ public class PostControllerTest
        mockPost.UserId = userId;
        mockUser.Posts = GetMockPosts();
        
-       // Mock the repos
-       _mockPostRepository.Setup(repo => repo.GetTById(It.IsAny<int>())).ReturnsAsync(mockPost);
-       _mockPostRepository.Setup(repo => repo.Update(It.IsAny<Post>())).ReturnsAsync(true);
-       _mockUserManager.Setup(m => m.FindByIdAsync(userId)).ReturnsAsync(mockUser); // Ensure FindByIdAsync returns the mock user
-       
-       // Act
-       var result = await _controller.Update(mockPost);
-       
-       // Assert
-       var okResult = Assert.IsType<OkObjectResult>(result);
-       Assert.Equal(mockPost.PostId, okResult.Value);
-   }
-   
-   // Method for testing Update function when it returns OK
-   [Fact]
-   public async Task Update_ReturnPostNotFoundTest()
+        // Mock the repos
+        _mockPostRepository.Setup(repo => repo.GetTById(It.IsAny<int>())).ReturnsAsync(mockPost);
+        _mockPostRepository.Setup(repo => repo.Update(It.IsAny<Post>())).ReturnsAsync(true);
+        _mockUserManager.Setup(m => m.FindByIdAsync(userId)).ReturnsAsync(mockUser); // Ensure FindByIdAsync returns the mock user
+        
+        // Mock the db context Entry method
+        var mockEntityEntry = new Mock<EntityEntry<Post>>(MockBehavior.Loose, (Post)null!);
+        EntityState capturedState = EntityState.Detached;
+        mockEntityEntry.SetupSet(e => e.State = It.IsAny<EntityState>()).Callback<EntityState>(s => capturedState = s);
+        mockEntityEntry.SetupGet(e => e.State).Returns(() => capturedState);
+        _mockForumDbContext.Setup(c => c.Entry(It.IsAny<Post>())).Returns(mockEntityEntry.Object);
+        
+        // Act
+        var result = await _controller.Update(mockPost);
+        
+        // Assert
+        var okResult = Assert.IsType<OkObjectResult>(result);
+        Assert.Equal(mockPost.PostId, okResult.Value);
+    }
+    
+    // Method for testing Update function when it returns OK
+    [Fact]
+    public async Task Update_ReturnPostNotFoundTest()
    {
        // Arrange
        var (mockUser, claimsPrincipal) = CreateMockUser(); // Create user with claim
@@ -873,18 +881,26 @@ public class PostControllerTest
        var mockPost = GetMockPosts().First(p => p.UserId == userId);
        mockPost.User = mockUser;
        mockPost.UserId = userId;
-       mockUser.Posts = GetMockPosts();
-       
-       // Mock the repos
-       _mockPostRepository.Setup(repo => repo.GetTById(It.IsAny<int>())).ReturnsAsync(mockPost);
-       _mockPostRepository.Setup(repo => repo.Update(It.IsAny<Post>())).ReturnsAsync(true); 
-       _mockTags.Setup(repo => repo.GetAll()).ReturnsAsync((List<Tag>) null!); // Return null tags
-
-       // Act
-       var result = await _controller.Update(mockPost);
-
-       // Assert
-       var statusCodeResult = Assert.IsType<NotFoundObjectResult>(result);
+        mockUser.Posts = GetMockPosts();
+        
+         // Mock the repos
+         _mockPostRepository.Setup(repo => repo.GetTById(It.IsAny<int>())).ReturnsAsync(mockPost);
+         _mockPostRepository.Setup(repo => repo.Update(It.IsAny<Post>())).ReturnsAsync(true);
+         _mockUserManager.Setup(m => m.FindByIdAsync(userId)).ReturnsAsync(mockUser); // Ensure FindByIdAsync returns the mock user
+         _mockTags.Setup(repo => repo.GetAll()).ReturnsAsync((List<Tag>?)null); // Return null tags
+         
+         // Mock the db context Entry method
+         var mockEntityEntry = new Mock<EntityEntry<Post>>(MockBehavior.Loose, (Post)null!);
+         EntityState capturedState = EntityState.Detached;
+         mockEntityEntry.SetupSet(e => e.State = It.IsAny<EntityState>()).Callback<EntityState>(s => capturedState = s);
+         mockEntityEntry.SetupGet(e => e.State).Returns(() => capturedState);
+         _mockForumDbContext.Setup(c => c.Entry(It.IsAny<Post>())).Returns(mockEntityEntry.Object);
+         
+         // Act
+         var result = await _controller.Update(mockPost);
+ 
+        // Assert
+        var statusCodeResult = Assert.IsType<NotFoundObjectResult>(result);
        Assert.Equal(404, statusCodeResult.StatusCode);
        Assert.Equal("Tags not found, cannot update post", statusCodeResult.Value);
    }
@@ -911,13 +927,20 @@ public class PostControllerTest
        mockUser.Posts = GetMockPosts();
        var mockTags = GetMockTags();
        
-       _mockPostRepository.Setup(repo => repo.GetTById(It.IsAny<int>())).ReturnsAsync(mockPost);
-       _mockTags.Setup(repo => repo.GetAll()).ReturnsAsync(mockTags);
-       _mockUserManager.Setup(m => m.FindByIdAsync(userId)).ReturnsAsync(mockUser); // Ensure FindByIdAsync returns the mock user
-       _mockPostRepository.Setup(repo => repo.Update(It.IsAny<Post>())).ReturnsAsync(false); 
-
-       // Act
-       var result = await _controller.Update(mockPost);
+        _mockPostRepository.Setup(repo => repo.GetTById(It.IsAny<int>())).ReturnsAsync(mockPost);
+        _mockTags.Setup(repo => repo.GetAll()).ReturnsAsync(mockTags);
+        _mockUserManager.Setup(m => m.FindByIdAsync(userId)).ReturnsAsync(mockUser); // Ensure FindByIdAsync returns the mock user
+        _mockPostRepository.Setup(repo => repo.Update(It.IsAny<Post>())).ReturnsAsync(false); 
+        
+        // Mock the db context Entry method
+        var mockEntityEntry = new Mock<EntityEntry<Post>>(MockBehavior.Loose, (Post)null!);
+        EntityState capturedState = EntityState.Detached;
+        mockEntityEntry.SetupSet(e => e.State = It.IsAny<EntityState>()).Callback<EntityState>(s => capturedState = s);
+        mockEntityEntry.SetupGet(e => e.State).Returns(() => capturedState);
+        _mockForumDbContext.Setup(c => c.Entry(It.IsAny<Post>())).Returns(mockEntityEntry.Object);
+ 
+        // Act
+        var result = await _controller.Update(mockPost);
 
        // Assert
        var statusCodeResult = Assert.IsType<ObjectResult>(result);
