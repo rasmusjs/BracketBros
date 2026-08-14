@@ -6,14 +6,21 @@ export default defineNuxtConfig({
             noExternal: ['vuetify'],
         },
         optimizeDeps: {
-            include: ['punycode'],
+            include: [
+                'punycode',
+                'vuetify/components/VOverlay',
+                'vuetify/components/VDialog',
+                'vuetify/components/VMenu',
+                'vuetify/components/VSelect',
+                'vuetify/components/VTooltip',
+            ],
         },
     },
     modules: [
         async (options, nuxt) => {
             nuxt.hooks.hook('vite:extendConfig', (config) =>
                 // @ts-ignore
-                config.plugins.push(vuetify())
+                config.plugins.push(vuetify({autoImport: true})),
             );
         },
         [
@@ -26,5 +33,5 @@ export default defineNuxtConfig({
             },
         ],
     ],
-    css: ['@/assets/style/main.scss'],
+    css: ['~/assets/style/main.scss'],
 });

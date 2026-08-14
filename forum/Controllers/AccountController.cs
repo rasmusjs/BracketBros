@@ -191,7 +191,7 @@ public class AccountController : Controller
             var re = new Regex(emailRegex);
             if (re.IsMatch(model.Identifier))
                 // If the email is valid, try to find the username associated with the email
-                model.Identifier = _userManager.FindByEmailAsync(model.Identifier).Result.UserName ?? model.Identifier;
+                model.Identifier = _userManager.FindByEmailAsync(model.Identifier).Result.UserName;
             else
                 return StatusCode(422, "Email is not valid");
         }

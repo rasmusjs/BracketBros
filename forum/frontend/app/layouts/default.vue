@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import {useDisplay, useTheme} from 'vuetify/lib/framework.mjs';
+import {useDisplay, useTheme} from 'vuetify';
 
 // Setting the favicon using the useHead function
 useHead({

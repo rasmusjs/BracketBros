@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import {useTheme} from 'vuetify/lib/framework.mjs';
+import {useTheme} from 'vuetify';
 
 // Accessing the theme object
 const theme = useTheme();

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import {useTheme} from 'vuetify/lib/framework.mjs';
+import {useTheme} from 'vuetify';
 import {toast} from 'vue3-toastify';
 import {defaultToastOptions} from '@/constants';
 

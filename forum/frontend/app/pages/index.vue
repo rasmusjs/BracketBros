@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import {useDisplay} from 'vuetify/lib/framework.mjs';
+import {useDisplay} from 'vuetify';
 import {toast} from 'vue3-toastify';
 import {defaultToastOptions} from '~/constants';
 
